@@ -633,6 +633,155 @@ button:focus-visible {
   .btn-launch { min-height: 58px; padding: 8px 16px; }
 }
 
+/* ================= Paysage (téléphone couché) =================
+   Peu de hauteur, beaucoup de largeur : « − » score « + » côte à côte. */
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    column-gap: 14px;
+    padding: 2px 12px 4px;
+  }
+
+  .banner-value {
+    font-size: 2.1rem;
+  }
+
+  .banner.is-over .banner-label {
+    font-size: 1.4rem;
+    padding: 2px 0;
+  }
+
+  .banner-decisive {
+    margin-top: 0;
+  }
+
+  .columns {
+    gap: 8px;
+    padding: 6px 8px;
+  }
+
+  .col {
+    display: grid;
+    grid-template-columns: clamp(48px, 7vw, 72px) minmax(0, 1fr) clamp(48px, 7vw, 72px);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'name  name  name'
+      'meta  meta  meta'
+      'minus figs  plus'
+      'stage stage stage';
+    gap: 4px 6px;
+  }
+
+  .col-name {
+    grid-area: name;
+    font-size: 1.2rem;
+    padding: 3px 4px;
+  }
+
+  /* « Hors scène » à gauche, pastilles de Saison à droite, sur la même ligne */
+  .col-status {
+    grid-area: meta;
+    justify-self: start;
+    align-self: center;
+    min-height: 0;
+  }
+
+  .col-seasons {
+    grid-area: meta;
+    justify-self: end;
+    align-self: center;
+    min-height: 22px;
+    align-items: center;
+  }
+
+  .col.is-off .col-status {
+    margin: 0;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+  }
+
+  .btn-score {
+    align-self: center;
+    min-height: 64px;
+    height: min(100%, 96px);
+    font-size: 2.2rem;
+  }
+
+  .btn-plus {
+    grid-area: plus;
+  }
+
+  .btn-minus {
+    grid-area: minus;
+  }
+
+  .col-figures {
+    grid-area: figs;
+  }
+
+  .col-score {
+    font-size: clamp(2.4rem, min(19vh, 9.5vw), 5.5rem);
+  }
+
+  .cols-2 .col-score {
+    font-size: clamp(2.6rem, min(19vh, 14vw), 5.5rem);
+  }
+
+  .col-target,
+  .col-remaining {
+    font-size: 0.85rem;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .btn-stage {
+    grid-area: stage;
+    min-height: 48px;
+    font-size: 0.85rem;
+  }
+
+  .actions {
+    padding: 0 8px 6px;
+  }
+
+  .btn-action {
+    min-height: 48px;
+  }
+
+  .swipe-preview {
+    left: 20%;
+    right: 20%;
+    padding: 4px 12px 8px;
+  }
+
+  .preview-value {
+    font-size: 3rem;
+  }
+
+  /* Lancement : deux colonnes de boutons */
+  .launch {
+    padding-top: calc(var(--safe-t) + 10px);
+  }
+
+  .launch-title {
+    font-size: 2.4rem;
+  }
+
+  .launch-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-content: center;
+  }
+
+  .btn-resume {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
