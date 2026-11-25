@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <clipPath id="r"><rect width="512" height="512" rx="96"/></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect width="512" height="512" fill="#140a0c"/>
+    <!-- Rideaux -->
+    <path d="M0 40 H150 C135 190 110 330 40 512 H0 Z" fill="#6e1423"/>
+    <path d="M512 40 H362 C377 190 402 330 472 512 H512 Z" fill="#6e1423"/>
+    <path d="M60 40 C70 200 50 360 10 512" stroke="#4a0c18" stroke-width="14" fill="none"/>
+    <path d="M452 40 C442 200 462 360 502 512" stroke="#4a0c18" stroke-width="14" fill="none"/>
+    <!-- Lambrequin -->
+    <rect x="0" y="0" width="512" height="56" fill="#4a0c18"/>
+    <rect x="0" y="54" width="512" height="6" fill="#b8924a"/>
+    <!-- Croissant de lune -->
+    <circle cx="246" cy="282" r="112" fill="#f6ecd9"/>
+    <circle cx="298" cy="246" r="98" fill="#140a0c"/>
+  </g>
+</svg>
