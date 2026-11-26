@@ -98,21 +98,42 @@ async function checkLayout(page, label) {
       .filter(({ b }) => b.width < 48 || b.height < 48)
       .map(({ c, b }) => `${c} ${Math.round(b.width)}×${Math.round(b.height)}`);
     const scroll = document.scrollingElement.scrollHeight > H || document.scrollingElement.scrollWidth > W;
-    return { out, clipped, small, scroll };
+    // Chevauchements : chiffres / boutons d'une même colonne (glyphes réels, via Range)
+    const overlaps = [];
+    const hit = (a, b) => a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1;
+    for (const col of document.querySelectorAll('.col')) {
+      const parts = [...col.querySelectorAll('.col-score, .col-target, .col-remaining, .col-name, .col-seasons, .col-status')]
+        .filter((e) => e.textContent || e.classList.contains('col-seasons'))
+        .map((e) => { const r = document.createRange(); r.selectNodeContents(e); return { n: e.className, b: e.classList.contains('col-seasons') ? e.getBoundingClientRect() : r.getBoundingClientRect() }; });
+      const buttons = [...col.querySelectorAll('button')].map((e) => ({ n: e.className, b: e.getBoundingClientRect() }));
+      for (const p of parts) for (const q of [...buttons, ...parts]) {
+        const stacked = /col-(score|target|remaining)/.test(p.n) && /col-(score|target|remaining)/.test(q.n);
+        if (p !== q && !stacked && hit(p.b, q.b)) overlaps.push(`${col.className.split(' ')[1]} : ${p.n} / ${q.n}`);
+      }
+    }
+    return { out, clipped, small, scroll, overlaps: [...new Set(overlaps)] };
   });
   check(`${label} : aucun élément hors écran`, r.out.length === 0, r.out.slice(0, 4).join(' | '));
   check(`${label} : aucun texte coupé`, r.clipped.length === 0, r.clipped.join(' | '));
   check(`${label} : boutons ≥ 48 × 48 px`, r.small.length === 0, r.small.join(' | '));
   check(`${label} : pas de défilement`, !r.scroll);
+  check(`${label} : aucun chevauchement texte / boutons`, r.overlaps.length === 0, r.overlaps.slice(0, 4).join(' | '));
 }
 
 const VIEWPORTS = [
   { width: 360, height: 640 },
   { width: 390, height: 844 },
 ];
+// Mise en page : portrait et paysage (téléphone couché)
+const LAYOUT_VIEWPORTS = [
+  ...VIEWPORTS,
+  { width: 844, height: 390 },
+  { width: 667, height: 375 },
+  { width: 640, height: 360 },
+];
 
 // ---------- 1. Mise en page : 4 à 7 joueurs, deux tailles ----------
-for (const vp of VIEWPORTS) {
+for (const vp of LAYOUT_VIEWPORTS) {
   const tag = `${vp.width}x${vp.height}`;
   const { page, context } = await open(vp);
   await page.screenshot({ path: `${OUT}/${tag}-lancement.png` });
