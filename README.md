@@ -81,37 +81,50 @@ Pour tester ces fonctions sur un vrai téléphone :
 Rien n'est déployé automatiquement. Deux possibilités :
 
 **A. GitHub Actions (recommandé).** Dans le dépôt : *Settings → Pages → Source : GitHub Actions*,
-puis ajouter `.github/workflows/pages.yml` :
+puis ajouter `.github/workflows/pages.yml` (déjà présent dans ce dossier) :
 
 ```yaml
 name: Pages
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
   pages: write
   id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Contournement de https://github.com/actions/deploy-pages/issues/451 :
+      # l'artefact tout juste envoyé n'est pas toujours visible immédiatement.
+      - name: Attendre que l'artefact soit visible
+        run: sleep 15
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 ```
 
 **B. À la main.** `npm run build`, puis publier le contenu de `dist/` sur la branche `gh-pages`
